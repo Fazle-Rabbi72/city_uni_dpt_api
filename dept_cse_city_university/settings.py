@@ -24,13 +24,13 @@ environ.Env.read_env()
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dxmj(=31%*fua@0-v^0@_(0x2$)tp#lzpvxumf8oc!mj*uit(5'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app','localhost:3000']
 
 
 AUTH_USER_MODEL = "user.User"
@@ -38,7 +38,7 @@ AUTH_USER_MODEL = "user.User"
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
-    
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,8 +60,21 @@ INSTALLED_APPS = [
     
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://computer-club.onrender.com',
+    'http://127.0.0.1:8000',
+    'http://localhost:3000',  # for localhost (REACT Default)
+]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',  # for localhost (REACT Default)
+    'http://127.0.0.1:8000',
+    'http://localhost:5000',
+)
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -69,7 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'dept_cse_city_university.urls'
@@ -90,7 +103,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dept_cse_city_university.wsgi.application'
+WSGI_APPLICATION = 'dept_cse_city_university.wsgi.app'
 
 
 # Database
@@ -108,7 +121,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres.igofirpuwdjebitupukw',
-        'PASSWORD': 'fazlerabbi1972',
+        'PASSWORD': env('PASSWORD'),
         'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
         'PORT': '6543'
     }
@@ -149,7 +162,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
-
+STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+STATIC_RTOOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = BASE_DIR / 'mediafiles'
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  
 

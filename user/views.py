@@ -42,15 +42,9 @@ class LoginAPIView(APIView):
                         user_name = teacher.name
                         user_role = 'teacher'
                     except Teacher.DoesNotExist:
-                        try:
-                            # Check if the user is a Student
-                            student = Student.objects.get(user=user)
-                            user_name = student.user.get_full_name()  # Use associated User's full name
-                            user_role = 'student'
-                        except Student.DoesNotExist:
-                            # If neither, check if the user is an admin
-                            if user.is_superuser:
-                                user_role = 'admin'
+                        # If not a teacher, check if the user is an admin
+                        if user.is_superuser:
+                            user_role = 'admin'
 
                     # Prepare the response data, including the role
                     user_data = {
@@ -69,6 +63,38 @@ class LoginAPIView(APIView):
 
         # If serializer validation fails, return the validation errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminLoginAPIView(APIView):
+    def post(self, request):
+        # Use the UserLoginSerializer to validate the request data
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if not username or not password:
+            return Response({"error": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+        # Authenticate the user with the validated username and password
+        user = authenticate(username=username, password=password)
+
+        if user is not None: 
+            if user.is_superuser:
+                if user.is_active:   
+                    # Generate or get the auth token for the user
+                    token, _ = Token.objects.get_or_create(user=user)    
+
+                     # Log the user in (sets session and authentication)    
+                    login(request, user)    
+
+                    # Prepare the response data 
+                    user_data = {
+                        'token': token.key,
+                        'user_id': user.id,
+                        'username': user.username,
+                        'role': 'admin',
+                    }
+                    return Response(user_data, status=status.HTTP_200_OK)
+                return Response({"error": "User account is disabled."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutAPIview(APIView):
