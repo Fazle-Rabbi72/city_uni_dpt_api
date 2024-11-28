@@ -23,6 +23,7 @@ class StudentSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    Batch_name=serializers.CharField(source='batch.name', read_only=True)
 
     class Meta:
         model = Student
@@ -35,7 +36,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'father_name', 'mother_name',
 
             # Batch and status
-            'batch', 'is_approved', 'student_id',
+            'batch', 'is_approved', 'student_id','Batch_name',
 
             # SSC details
             'ssc_roll', 'ssc_reg', 'ssc_passing_year', 'ssc_result',
@@ -113,18 +114,52 @@ class RegistrationSerializer(serializers.ModelSerializer):
     semester = serializers.PrimaryKeyRelatedField(queryset=Semester.objects.all())
     courses = serializers.PrimaryKeyRelatedField(many=True, queryset=Subject.objects.all())
     total_fee = serializers.DecimalField(max_digits=8, decimal_places=2, read_only=True)
+    coures_name = serializers.SerializerMethodField()
+    student_name = serializers.SerializerMethodField()
+    semester_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Registration
-        fields = ['id', 'student', 'semester', 'courses', 'semester_fee', 'total_fee', 'time']
+        fields = ['id', 'student', 'semester', 'courses', 'semester_fee', 'total_fee', 'time', 'coures_name', 'student_name', 'semester_name']
+
+    def get_coures_name(self, obj):
+        return ", ".join([course.course_title for course in obj.courses.all()])
+
+    def get_student_name(self, obj):
+        user = obj.student.user
+        return f"{user.first_name} {user.last_name}"
+
+    def get_semester_name(self, obj):
+        return f"{obj.semester.name} {obj.semester.year}"
 
 class ResultSerializer(serializers.ModelSerializer):
+    teacher_name = serializers.SerializerMethodField()
+    subject_name = serializers.SerializerMethodField()
+    batch_name = serializers.SerializerMethodField()
+    semester_name = serializers.SerializerMethodField()
+    student_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Result
         fields = [
-            'id', 'subject', 'batch', 'marks', 'exam_type', 'teacher', 'student', 'semester'
+            'id', 'subject', 'batch', 'marks', 'exam_type', 'teacher', 'student', 'semester',
+            'teacher_name', 'subject_name', 'batch_name', 'semester_name', 'student_name'
         ]
 
+    def get_teacher_name(self, obj):
+        return obj.teacher.name if obj.teacher else None
+
+    def get_subject_name(self, obj):
+        return obj.subject.course_title if obj.subject else None
+
+    def get_batch_name(self, obj):
+        return obj.batch.name if obj.batch else None
+
+    def get_semester_name(self, obj):
+        return obj.semester.name+' '+str(obj.semester.year) if obj.semester else None
+
+    def get_student_name(self, obj):
+        return obj.student.user.first_name + ' ' + obj.student.user.last_name if obj.student else None
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     batch_name = serializers.CharField(source='batch.name', read_only=True)

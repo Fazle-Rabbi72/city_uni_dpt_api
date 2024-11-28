@@ -11,6 +11,7 @@ from .views import (
     ResultViewSet, 
     AnnouncementViewSet,
     LoginAPIView,
+    ChangePasswordView
 )
 
 # Create router and register viewsets
@@ -28,4 +29,5 @@ router.register(r'announcements', AnnouncementViewSet)
 urlpatterns = [
     path('', include(router.urls)),  # Routes for viewsets
     path('login/', LoginAPIView.as_view(), name='login'),  # Standalone login endpoint
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 ]
