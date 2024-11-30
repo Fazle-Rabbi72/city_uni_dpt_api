@@ -101,7 +101,7 @@ MEDIA_ROOT = BASE_DIR / 'mediafiles'
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
-    'https://computer-club.onrender.com',
+    'https://city-uni-dpt-api.onrender.com',
     'http://127.0.0.1:8000',
     'http://localhost:3000',
 ]
