@@ -18,6 +18,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import update_last_login
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import permissions
 
 
 
@@ -126,6 +127,9 @@ class ResultViewSet(viewsets.ModelViewSet):
     ordering = ['marks']
 
 class AnnouncementViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    
+    
     queryset = Announcement.objects.all()
     serializer_class = AnnouncementSerializer
     filter_backends = (SearchFilter, OrderingFilter, filters.DjangoFilterBackend)

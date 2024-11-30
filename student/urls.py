@@ -30,4 +30,5 @@ urlpatterns = [
     path('', include(router.urls)),  # Routes for viewsets
     path('login/', LoginAPIView.as_view(), name='login'),  # Standalone login endpoint
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('announcements/', AnnouncementViewSet.as_view({'get': 'list'}), name='announcement-list'),
 ]
