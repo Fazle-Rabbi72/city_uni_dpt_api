@@ -15,4 +15,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dept_cse_city_university.settin
 
 application = get_wsgi_application()
 
-app=application
+
