@@ -27,7 +27,7 @@ class Experience(models.Model):
 
 class Teacher(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teacher')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,default=None)
     email=models.EmailField()
     designation = models.CharField(max_length=100)
     phone = models.CharField(max_length=15, blank=True, null=True)

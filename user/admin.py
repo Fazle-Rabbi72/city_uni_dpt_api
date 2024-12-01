@@ -3,8 +3,9 @@ from .models import User
 
 class UserAdmin(admin.ModelAdmin):
     # Fields to display in the admin list view
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active')
+    list_display = ( 'username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active')
     list_filter = ('role', 'is_staff', 'is_active')
+    fields = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active', 'password')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     ordering = ('id',)
 

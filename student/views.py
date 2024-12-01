@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Student
 from .serializers import StudentSerializer
+from rest_framework.exceptions import AuthenticationFailed
 filter_backends = (SearchFilter, OrderingFilter, filters.DjangoFilterBackend)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
-from .serializers import LoginSerializer
 from .models import Semester, Batch, Student, Routine, Subject, Registration, Result, Announcement
 from .serializers import SemesterSerializer, BatchSerializer, StudentSerializer, RoutineSerializer, SubjectSerializer, RegistrationSerializer, ResultSerializer, AnnouncementSerializer,StudentCreateSerializer
 from django.contrib.auth import get_user_model
@@ -19,6 +19,7 @@ from django.contrib.auth.models import update_last_login
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import permissions
+from user.models import User
 
 
 
@@ -143,25 +144,38 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 
 class LoginAPIView(APIView):
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            # Retrieve the validated data from the serializer
-            email = serializer.validated_data.get('email')
-            password = serializer.validated_data.get('password')
-            print(f"Email: {email}, Password: {password}")
-            # Authenticate the user with the validated username and password
-            user_model = get_user_model()
-            print(user_model.objects.filter(email=email).exists())
-            
-            if user_model.objects.filter(email=email).exists():
-                token, _ = Token.objects.get_or_create(user=user_model.objects.get(email=email))
-                user = user_model.objects.get(email=email)
-                login(request, user)
-                
-                return Response({'token': token.key, 'user_id': user.id})
-            else:
-                return Response({'error': "Invalid user for login .Please sign up!"}, status=400)
-        return Response(serializer.errors, status=400)
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        print(f"Debug - Username: {username}, Password: {password}")  # Development only
+
+        if not username or not password:
+            raise AuthenticationFailed("Username and password are required.")
+
+        # If username is email, fetch the corresponding username
+        
+        user = User.objects.filter(email=username).first()
+        if user:
+            username = user.username
+
+        # Authenticate the user
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            raise AuthenticationFailed("Invalid username or password.")
+
+        # Get or create token for the authenticated user
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        })
+
+    
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
