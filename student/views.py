@@ -19,6 +19,7 @@ from django.contrib.auth.models import update_last_login
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import permissions
+from django.contrib.auth.hashers import check_password
 from user.models import User
 from django.contrib.auth.hashers import check_password
 
@@ -173,8 +174,6 @@ class LoginAPIView(APIView):
             except Student.DoesNotExist:
                 return Response({"error": "Student record not found"}, status=404)
         return Response(serializer.errors, status=400)
-    
-    
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 

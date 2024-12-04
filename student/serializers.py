@@ -174,14 +174,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = ['id', 'title', 'batch', 'batch_name', 'file']
 
-# class LoginSerializer(serializers.Serializer):
-#     username = serializers.CharField(required=True)
-#     password = serializers.CharField(required=True)
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
-
-    
-
-
-    
+   
