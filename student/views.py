@@ -156,11 +156,14 @@ class LoginAPIView(APIView):
                 
                 
                 if check_password(password, student.password):
+                    
+                    token, _ = Token.objects.get_or_create(user=user)
                     login(request, user)  
                     return Response({
                         "message": "Login successful",
                         "user_id": user.id,
                         "username": user.username,
+                        "token": token.key,
                         "role": "student"
                     }, status=200)
                 else:
