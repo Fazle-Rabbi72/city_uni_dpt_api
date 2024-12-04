@@ -4,6 +4,8 @@ from .models import Semester, Batch, Student, Routine, Subject, Registration, Re
 from rest_framework import serializers
 from .models import Semester, Batch,  Student, Routine, Subject, Registration, Result, Announcement
 from  user.models import User
+from django.contrib.auth.hashers import check_password
+
 
 class SemesterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,7 +33,7 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = [
             # User-related fields
-            'id', 'first_name', 'last_name', 'email','username','role',
+            'id', 'first_name', 'last_name', 'email','username','role','password',
             
             # Personal details
             'phone', 'date_of_birth', 'address', 'gender', 'photo',
@@ -82,7 +84,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
         # Extract user data
         user_data = validated_data.pop('user')
         user = User.objects.create(
-            username=user_data['email'],  # Assuming email is used as the username
+            username=user_data['username'],  # Assuming email is used as the username
             email=user_data['email'],
             first_name=user_data['first_name'],
             last_name=user_data['last_name']
@@ -172,8 +174,15 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = ['id', 'title', 'batch', 'batch_name', 'file']
 
+<<<<<<< HEAD
 # class LoginSerializer(serializers.Serializer):
 #     username = serializers.CharField(required=True)
 #     password = serializers.CharField(required=True)
 
     
+=======
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+   
+>>>>>>> ec077f6 (update student login)

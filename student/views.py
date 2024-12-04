@@ -19,6 +19,10 @@ from django.contrib.auth.models import update_last_login
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import permissions
+<<<<<<< HEAD
+=======
+from django.contrib.auth.hashers import check_password
+>>>>>>> ec077f6 (update student login)
 from user.models import User
 
 
@@ -144,6 +148,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 
 class LoginAPIView(APIView):
     def post(self, request):
+<<<<<<< HEAD
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -177,6 +182,37 @@ class LoginAPIView(APIView):
 
     
 
+=======
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = request.data.get('username')
+            password = request.data.get('password')
+            
+            
+            try:
+               
+                user = User.objects.get(username=username)
+                
+                
+                student = user.student  
+                
+                
+                if check_password(password, student.password):
+                    login(request, user)  
+                    return Response({
+                        "message": "Login successful",
+                        "user_id": user.id,
+                        "username": user.username,
+                        "role": "student"
+                    }, status=200)
+                else:
+                    return Response({"error": "Invalid username or password"}, status=401)
+            except User.DoesNotExist:
+                return Response({"error": "Invalid username or password"}, status=401)
+            except Student.DoesNotExist:
+                return Response({"error": "Student record not found"}, status=404)
+        return Response(serializer.errors, status=400)
+>>>>>>> ec077f6 (update student login)
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -201,8 +237,8 @@ class ChangePasswordView(APIView):
             return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
         # Set new password
-        user.set_password(new_password)
-        user.save()
+        Student.set_password(new_password)
+        Student.save()
 
         # Update last login (optional)
         update_last_login(None, user)
