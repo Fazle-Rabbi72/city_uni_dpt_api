@@ -99,10 +99,11 @@ class Student(models.Model):
             send_mail(
                 'Your Approval Confirmation',
                 f'Congratulations {self.user.first_name},\n\n'
-                f'You have been approved as a student.\n\n'
+                f'You have been approved as a student in our university.\n\n'
                 f'Your Student ID: {self.student_id}\n'
                 f'Your Password: {raw_password}\n\n'
-                f'Please log in to your account and change your password for security.',
+                f'Please log in to your account and change your password for security.\n\n'
+                f'Admission Office',
                 'admin@example.com',  # Replace with your admin email
                 [self.user.email],
                 fail_silently=False,
