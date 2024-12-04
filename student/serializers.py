@@ -27,7 +27,7 @@ class StudentSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
     Batch_name=serializers.CharField(source='batch.name', read_only=True)
     username=serializers.CharField(source="user.username",read_only=True)
-    # role=serializers.CharField(source="user.role",read_only=True)
+    role=serializers.CharField(source="user.role",read_only=True)
 
     class Meta:
         model = Student
@@ -60,7 +60,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
-    # role=serializers.ChoiceField(choices=User.ROLE_CHOICES, default='student')
+    
     username=serializers.CharField(source="user.username")
 
     class Meta:
