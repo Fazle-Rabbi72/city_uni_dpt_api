@@ -27,7 +27,7 @@ class StudentSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
     Batch_name=serializers.CharField(source='batch.name', read_only=True)
     username=serializers.CharField(source="user.username",read_only=True)
-    role=serializers.CharField(source="user.role",read_only=True)
+    # role=serializers.CharField(source="user.role",read_only=True)
 
     class Meta:
         model = Student
@@ -60,14 +60,14 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
-    role=serializers.CharField(source="user.role")
+    # role=serializers.ChoiceField(choices=User.ROLE_CHOICES, default='student')
     username=serializers.CharField(source="user.username")
 
     class Meta:
         model = Student
         fields = [
             # User-related fields
-            'first_name', 'last_name', 'email','username','role',
+            'first_name', 'last_name', 'email','username',
             
             # Personal details
             'phone', 'date_of_birth', 'address', 'gender', 'photo',
@@ -87,7 +87,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
             username=user_data['username'],  # Assuming email is used as the username
             email=user_data['email'],
             first_name=user_data['first_name'],
-            last_name=user_data['last_name']
+            last_name=user_data['last_name'],
         )
         user.set_password('defaultpassword')  # Set a default password or use email for verification
         user.save()
@@ -174,15 +174,14 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = ['id', 'title', 'batch', 'batch_name', 'file']
 
-<<<<<<< HEAD
 # class LoginSerializer(serializers.Serializer):
 #     username = serializers.CharField(required=True)
 #     password = serializers.CharField(required=True)
-
-    
-=======
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
-   
->>>>>>> ec077f6 (update student login)
+
+    
+
+
+    
