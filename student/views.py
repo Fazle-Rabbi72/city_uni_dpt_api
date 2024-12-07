@@ -161,7 +161,7 @@ class LoginAPIView(APIView):
                     login(request, user)  
                     return Response({
                         "message": "Login successful",
-                        "user_id": user.id,
+                        "user_id": student.id,
                         "username": user.username,
                         "token": token.key,
                         "role": "student"
